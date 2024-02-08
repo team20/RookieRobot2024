@@ -1,10 +1,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class CalibrationAutoCommand extends CommandBase {
+public class CalibrationAutoCommand extends Command {
     private final DriveSubsystem m_driveSubsystem;
 
     public static enum Operation {
@@ -50,7 +50,7 @@ public class CalibrationAutoCommand extends CommandBase {
             SmartDashboard.putNumber("current position", currentPosition);
             m_amount += currentPosition; 
         } else {
-            SmartDashboard.putNumber("starting angle", m_driveSubsystem.getFrontLeftSwerveModule().getCANCoder().getPosition());
+            SmartDashboard.putNumber("starting angle", m_driveSubsystem.getFrontLeftSwerveModule().getCANCoder().getPosition().getValueAsDouble());
         }
     }
 
@@ -70,7 +70,7 @@ public class CalibrationAutoCommand extends CommandBase {
     public boolean isFinished() {
         switch(m_op){
             case CMD_ANGLE:
-                double encAng = m_driveSubsystem.getFrontLeftSwerveModule().getCANCoder().getPosition() % 360;
+                double encAng = m_driveSubsystem.getFrontLeftSwerveModule().getCANCoder().getPosition().getValueAsDouble() % 360;
                 double ang1 = encAng - 360;
                 //The error between the actual angle and the target angle
                 double diff1 = Math.abs(encAng - m_amount);
@@ -78,10 +78,10 @@ public class CalibrationAutoCommand extends CommandBase {
                 boolean isDone = (Math.min(diff1, diff2) < 2); // 2 degree tolerance
                 if(isDone == false)
                     return false;
-                SmartDashboard.putNumber("fl_angle", m_driveSubsystem.getFrontLeftSwerveModule().getCANCoder().getPosition());
-                SmartDashboard.putNumber("bl_angle", m_driveSubsystem.getBackLeftSwerveModule().getCANCoder().getPosition());
-                SmartDashboard.putNumber("fr_angle", m_driveSubsystem.getFrontRightSwerveModule().getCANCoder().getPosition());
-                SmartDashboard.putNumber("br_angle", m_driveSubsystem.getBackRightSwerveModule().getCANCoder().getPosition());
+                SmartDashboard.putNumber("fl_angle", m_driveSubsystem.getFrontLeftSwerveModule().getCANCoder().getPosition().getValueAsDouble());
+                SmartDashboard.putNumber("bl_angle", m_driveSubsystem.getBackLeftSwerveModule().getCANCoder().getPosition().getValueAsDouble());
+                SmartDashboard.putNumber("fr_angle", m_driveSubsystem.getFrontRightSwerveModule().getCANCoder().getPosition().getValueAsDouble());
+                SmartDashboard.putNumber("br_angle", m_driveSubsystem.getBackRightSwerveModule().getCANCoder().getPosition().getValueAsDouble());
                 return true;
             case CMD_DISTANCE:
                 //Determine whether the target distance has been reached
