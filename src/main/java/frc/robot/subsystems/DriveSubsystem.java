@@ -68,14 +68,6 @@ public class DriveSubsystem extends SubsystemBase {
         SwerveConstants.BackRightZero, 
         DriveConstants.kBackRightDriveInverted);
     }
-    m_gyro.calibrate();
-    new Thread(() -> {
-        try{
-          Thread.sleep(1000);
-          m_gyro.reset();
-        }catch(Exception e){}
-    });
-    resetEncoders();
   }
   double oldVal;
   public double getHeading(){
@@ -179,10 +171,10 @@ public class DriveSubsystem extends SubsystemBase {
     // PID controller, and use it to calculate the duty cycle for its motor, and
     // spin the motor
 
-    m_frontLeftSwerveModule.getSteerMotor().set(m_frontLeftSwerveModule.getPIDController().calculate(m_frontLeftSwerveModule.getCANCoder().getAbsolutePosition()));
-    m_frontRightSwerveModule.getSteerMotor().set(m_frontRightSwerveModule.getPIDController().calculate(m_frontRightSwerveModule.getCANCoder().getAbsolutePosition()));
-    m_backLeftSwerveModule.getSteerMotor().set(m_backLeftSwerveModule.getPIDController().calculate(m_backLeftSwerveModule.getCANCoder().getAbsolutePosition()));
-    m_backRightSwerveModule.getSteerMotor().set(m_backRightSwerveModule.getPIDController().calculate(m_backRightSwerveModule.getCANCoder().getAbsolutePosition()));
+    m_frontLeftSwerveModule.getSteerMotor().set(m_frontLeftSwerveModule.getPIDController().calculate(m_frontLeftSwerveModule.getCANCoder().getAbsolutePosition().getValueAsDouble()));
+    m_frontRightSwerveModule.getSteerMotor().set(m_frontRightSwerveModule.getPIDController().calculate(m_frontRightSwerveModule.getCANCoder().getAbsolutePosition().getValueAsDouble()));
+    m_backLeftSwerveModule.getSteerMotor().set(m_backLeftSwerveModule.getPIDController().calculate(m_backLeftSwerveModule.getCANCoder().getAbsolutePosition().getValueAsDouble()));
+    m_backRightSwerveModule.getSteerMotor().set(m_backRightSwerveModule.getPIDController().calculate(m_backRightSwerveModule.getCANCoder().getAbsolutePosition().getValueAsDouble()));
     
   
   }

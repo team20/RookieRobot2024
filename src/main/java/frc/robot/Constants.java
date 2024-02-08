@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import com.revrobotics.SparkMaxPIDController.AccelStrategy;
+import com.revrobotics.SparkPIDController.AccelStrategy;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -58,8 +58,8 @@ public final class Constants {
 	public static final class DriveConstants {
 		// CAN IDs (updated)
 		public static final int kCounterWeightPort = 17;
-		public static final int kFrontRightDrivePort = 4;
-		public static final int kFrontRightSteerPort = 5;
+		public static final int kFrontRightDrivePort = 30;
+		public static final int kFrontRightSteerPort = 40;
 		public static final int kFrontLeftDrivePort = 2;
 		public static final int kFrontLeftSteerPort = 3;
 		public static final int kBackRightDrivePort = 8;
@@ -121,5 +121,13 @@ public final class Constants {
 		// public static final double BackRightZero = 32.73;
 
 
+	}
+
+	public static final class ModuleConstants {
+		//CAN IDs
+		public static final int kShooterCANCoderPort = 0;
+		public static final int kFlipCANCoderPort = 0;
+		public static final int kTransportRightCANCoder = 0;
+		public static final int kTransportLeftCANCoder = 0;
 	}
 }

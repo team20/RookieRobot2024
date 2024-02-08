@@ -13,7 +13,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
@@ -25,7 +25,7 @@ import frc.robot.subsystems.DriveSubsystem;
  * and
  * https://www.chiefdelphi.com/uploads/default/original/3X/e/f/ef10db45f7d65f6d4da874cd26db294c7ad469bb.pdf
  */
-public class DefaultDriveCommand extends CommandBase {
+public class DefaultDriveCommand extends Command {
   private final DriveSubsystem m_driveSubsystem;
   private Supplier<Double> m_yAxisDrive;
   private Supplier<Double> m_xAxisDrive;

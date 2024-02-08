@@ -4,10 +4,10 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class ResetToZeroDegreesCommand extends CommandBase {
+public class ResetToZeroDegreesCommand extends Command {
   private DriveSubsystem m_driveSubsystem;
 
   public ResetToZeroDegreesCommand() {

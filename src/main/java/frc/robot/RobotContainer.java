@@ -10,10 +10,12 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AprilTagAlignAndIDCommand;
 import frc.robot.commands.CalibrationAutoCommand;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.subsystems.AprilTagSubsystem;
 // import frc.robot.commands.ResetToZeroDegreesCommand;
 // import frc.robot.subsystems.CounterWeightSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -29,6 +31,7 @@ public class RobotContainer {
   private final Joystick m_joystick = new Joystick(ControllerConstants.kDriverControllerPort);
   private final GenericHID m_controller = new GenericHID(ControllerConstants.kDriverControllerPort);
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+  private final AprilTagSubsystem m_tagSubsystem = AprilTagSubsystem.get();
   // private final CounterWeightSubsystem m_counterWeightSubsystem = new CounterWeightSubsystem();
 
   /**
@@ -63,7 +66,8 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return new SequentialCommandGroup(new CalibrationAutoCommand(CalibrationAutoCommand.Operation.CMD_ANGLE, 0),
+    return new SequentialCommandGroup(new AprilTagAlignAndIDCommand(),
+                                      new CalibrationAutoCommand(CalibrationAutoCommand.Operation.CMD_ANGLE, 0),
                                       new CalibrationAutoCommand(CalibrationAutoCommand.Operation.CMD_DISTANCE, 8));
   }
 }

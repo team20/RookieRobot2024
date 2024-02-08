@@ -4,11 +4,11 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -20,17 +20,16 @@ import frc.robot.Constants.SwerveConstants;
 /** Add your docs here. */
 public class SwerveModule {
     private PIDController m_PIDController = new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD, DriveConstants.kSteerPeriod);
-    private CANCoder m_CANCoder;
+    private CANcoder m_CANcoder;
     private CANSparkMax m_driveMotor;
     public RelativeEncoder m_driveEncoder;
     private CANSparkMax m_steerMotor;
 
     public SwerveModule(int CANport, int drivePort, int steerPort, double magnetOfset, boolean inverted){
-        m_CANCoder = new CANCoder(CANport);
+        m_CANcoder = new CANcoder(CANport);
         m_driveMotor = new CANSparkMax(drivePort, MotorType.kBrushless);
         m_steerMotor = new CANSparkMax(steerPort, MotorType.kBrushless);
         m_driveEncoder = m_driveMotor.getEncoder();
-        m_CANCoder.configMagnetOffset(-magnetOfset);
         configMotorController(m_driveMotor);
         m_driveMotor.setInverted(inverted);
         configMotorController(m_steerMotor);
@@ -59,8 +58,8 @@ public class SwerveModule {
     }
 
 
-    public CANCoder getCANCoder() {
-        return this.m_CANCoder;
+    public CANcoder getCANCoder() {
+        return this.m_CANcoder;
     }
 
 
@@ -89,6 +88,6 @@ public class SwerveModule {
         m_driveMotor.set(state.speedMetersPerSecond * DriveConstants.kDriveScale);
         m_PIDController.setSetpoint(state.angle.getDegrees());
         //Print state to dashboard
-        SmartDashboard.putString("Swerve module " + m_CANCoder.getDeviceID(), state.toString());
+        SmartDashboard.putString("Swerve module " + m_CANcoder.getDeviceID(), state.toString());
     }
 }
