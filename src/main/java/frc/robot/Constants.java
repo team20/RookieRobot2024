@@ -57,19 +57,19 @@ public final class Constants {
 
 	public static final class DriveConstants {
 		// CAN IDs (updated)
-		public static final int kCounterWeightPort = 17;
-		public static final int kFrontRightDrivePort = 4;
-		public static final int kFrontRightSteerPort = 5;
-		public static final int kFrontLeftDrivePort = 2;
-		public static final int kFrontLeftSteerPort = 3;
-		public static final int kBackRightDrivePort = 8;
-		public static final int kBackRightSteerPort = 9;
-		public static final int kBackLeftDrivePort = 7;
-		public static final int kBackLeftSteerPort = 6;
-		public static final int kFrontRightCANCoderPort = 14;
-		public static final int kFrontLeftCANCoderPort = 13;
-		public static final int kBackRightCANCoderPort = 15;
-		public static final int kBackLeftCANCoderPort = 16;
+		//public static final int kCounterWeightPort = 17;
+		public static final int kFrontRightDrivePort = 10;
+		public static final int kFrontRightSteerPort = 11;
+		public static final int kFrontLeftDrivePort = 40;
+		public static final int kFrontLeftSteerPort = 41;
+		public static final int kBackRightDrivePort = 20;
+		public static final int kBackRightSteerPort = 21;
+		public static final int kBackLeftDrivePort = 30;
+		public static final int kBackLeftSteerPort = 31;
+		public static final int kFrontRightCANCoderPort = 12;
+		public static final int kFrontLeftCANCoderPort = 42;
+		public static final int kBackRightCANCoderPort = 22;
+		public static final int kBackLeftCANCoderPort = 32;
 		public static final double kDriveScale = 0.5;
 		// Drive PID values
 		public static final double kP = 0.005;
