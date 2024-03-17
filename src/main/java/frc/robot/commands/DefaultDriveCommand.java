@@ -12,11 +12,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ControllerConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Swerve drive joystick command
@@ -25,13 +24,11 @@ import frc.robot.subsystems.DriveSubsystem;
  * and
  * https://www.chiefdelphi.com/uploads/default/original/3X/e/f/ef10db45f7d65f6d4da874cd26db294c7ad469bb.pdf
  */
-public class DefaultDriveCommand extends CommandBase {
+public class DefaultDriveCommand extends Command {
   private final DriveSubsystem m_driveSubsystem;
   private Supplier<Double> m_yAxisDrive;
   private Supplier<Double> m_xAxisDrive;
   private Supplier<Double> m_rotationAxis;
-  private double m_trackWidth;
-  private double m_wheelBase;  
   private SwerveDriveKinematics m_kinematics;
 
 
@@ -46,13 +43,11 @@ public class DefaultDriveCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    m_trackWidth = DriveConstants.kTrackWidth;
-    m_wheelBase = DriveConstants.kWheelBase;
         // Locations for the swerve drive modules relative to the robot center.
-    Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
-    Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
-    Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
-    Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
+    Translation2d m_frontLeftLocation = new Translation2d(0.3, 0.3);
+    Translation2d m_frontRightLocation = new Translation2d(0.3, -0.3);
+    Translation2d m_backLeftLocation = new Translation2d(-0.3, 0.3);
+    Translation2d m_backRightLocation = new Translation2d(-0.3, -0.3);
 
     // Creating my kinematics object using the module locations
     m_kinematics = new SwerveDriveKinematics(
@@ -76,6 +71,8 @@ public class DefaultDriveCommand extends CommandBase {
 
     ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
       fwdSpeed, strSpeed, rotSpeed, Rotation2d.fromDegrees(DriveSubsystem.get().getHeading()));
+
+    SmartDashboard.putString("Speeds", speeds.toString());
 
     // Now use this in our kinematics
     SwerveModuleState[] moduleStates = m_kinematics.toSwerveModuleStates(speeds);
@@ -140,11 +137,11 @@ public class DefaultDriveCommand extends CommandBase {
 
     
     // SmartDashboard logging
-    {
+    */{
       SmartDashboard.putNumber("Foward Speed", fwdSpeed);
       SmartDashboard.putNumber("Strafe Speed", strSpeed);
       SmartDashboard.putNumber("Rotation Speed", rotSpeed);
-      SmartDashboard.putNumber("a", a);
+      /*SmartDashboard.putNumber("a", a);
       SmartDashboard.putNumber("b", b);
       SmartDashboard.putNumber("c", c);
       SmartDashboard.putNumber("d", d);
@@ -156,9 +153,9 @@ public class DefaultDriveCommand extends CommandBase {
       SmartDashboard.putNumber("Front Left Wheel Angle", frontLeftAngle);
       SmartDashboard.putNumber("Back Right Wheel Angle", backRightAngle);
       SmartDashboard.putNumber("Back Left Wheel Angle", backLeftAngle);
-      SmartDashboard.putNumber("NavX yaw angle", Math.toDegrees(gyroAngleRad));
+      SmartDashboard.putNumber("NavX yaw angle", Math.toDegrees(gyroAngleRad));*/
 
-    }
+    }/*
 
     if(leftStickMagnitude + Math.abs(rotSpeed) > 0.1){
       // Move the robot

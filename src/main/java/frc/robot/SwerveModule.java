@@ -4,15 +4,16 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.revrobotics.CANSparkBase;
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SwerveConstants;
@@ -20,17 +21,17 @@ import frc.robot.Constants.SwerveConstants;
 /** Add your docs here. */
 public class SwerveModule {
     private PIDController m_PIDController = new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD, DriveConstants.kSteerPeriod);
-    private CANCoder m_CANCoder;
-    private CANSparkMax m_driveMotor;
+    private CANcoder m_CANCoder;
+    private CANSparkFlex m_driveMotor;
     public RelativeEncoder m_driveEncoder;
     private CANSparkMax m_steerMotor;
 
     public SwerveModule(int CANport, int drivePort, int steerPort, double magnetOfset, boolean inverted){
-        m_CANCoder = new CANCoder(CANport);
-        m_driveMotor = new CANSparkMax(drivePort, MotorType.kBrushless);
+        m_CANCoder = new CANcoder(CANport);
+        m_driveMotor = new CANSparkFlex(drivePort, MotorType.kBrushless);
         m_steerMotor = new CANSparkMax(steerPort, MotorType.kBrushless);
         m_driveEncoder = m_driveMotor.getEncoder();
-        m_CANCoder.configMagnetOffset(-magnetOfset);
+        m_CANCoder.setPosition(-magnetOfset);
         configMotorController(m_driveMotor);
         m_driveMotor.setInverted(inverted);
         configMotorController(m_steerMotor);
@@ -46,7 +47,7 @@ public class SwerveModule {
 
      *                        The CANSparkMax to configure
      */
-    public static void configMotorController(CANSparkMax motorController) {
+    public static void configMotorController(CANSparkBase motorController) {
         motorController.restoreFactoryDefaults();
         motorController.setIdleMode(IdleMode.kBrake);
         motorController.enableVoltageCompensation(12);
@@ -59,12 +60,12 @@ public class SwerveModule {
     }
 
 
-    public CANCoder getCANCoder() {
+    public CANcoder getCANcoder() {
         return this.m_CANCoder;
     }
 
 
-    public CANSparkMax getDriveMotor() {
+    public CANSparkFlex getDriveMotor() {
         return this.m_driveMotor;
     }
 
@@ -87,7 +88,7 @@ public class SwerveModule {
         state = SwerveModuleState.optimize(state, state.angle);
         // Set drive speed
         m_driveMotor.set(state.speedMetersPerSecond * DriveConstants.kDriveScale);
-        m_PIDController.setSetpoint(state.angle.getDegrees());
+        m_PIDController.setSetpoint(state.angle.getRotations());
         //Print state to dashboard
         SmartDashboard.putString("Swerve module " + m_CANCoder.getDeviceID(), state.toString());
     }

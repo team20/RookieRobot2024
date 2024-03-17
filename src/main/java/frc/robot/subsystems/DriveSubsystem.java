@@ -6,11 +6,9 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.DriveConstants;
@@ -23,7 +21,6 @@ public class DriveSubsystem extends SubsystemBase {
   private SwerveModule m_backRightSwerveModule;
   private static DriveSubsystem s_subsystem;
   private AHRS m_gyro = new AHRS(SPI.Port.kMXP); 
-  private MedianFilter filter = new MedianFilter(5);
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -68,7 +65,7 @@ public class DriveSubsystem extends SubsystemBase {
         SwerveConstants.BackRightZero, 
         DriveConstants.kBackRightDriveInverted);
     }
-    m_gyro.calibrate();
+    m_gyro.zeroYaw();
     new Thread(() -> {
         try{
           Thread.sleep(1000);
@@ -179,10 +176,10 @@ public class DriveSubsystem extends SubsystemBase {
     // PID controller, and use it to calculate the duty cycle for its motor, and
     // spin the motor
 
-    m_frontLeftSwerveModule.getSteerMotor().set(m_frontLeftSwerveModule.getPIDController().calculate(m_frontLeftSwerveModule.getCANCoder().getAbsolutePosition()));
-    m_frontRightSwerveModule.getSteerMotor().set(m_frontRightSwerveModule.getPIDController().calculate(m_frontRightSwerveModule.getCANCoder().getAbsolutePosition()));
-    m_backLeftSwerveModule.getSteerMotor().set(m_backLeftSwerveModule.getPIDController().calculate(m_backLeftSwerveModule.getCANCoder().getAbsolutePosition()));
-    m_backRightSwerveModule.getSteerMotor().set(m_backRightSwerveModule.getPIDController().calculate(m_backRightSwerveModule.getCANCoder().getAbsolutePosition()));
+    m_frontLeftSwerveModule.getSteerMotor().set(m_frontLeftSwerveModule.getPIDController().calculate(m_frontLeftSwerveModule.getCANcoder().getAbsolutePosition().getValueAsDouble()));
+    m_frontRightSwerveModule.getSteerMotor().set(m_frontRightSwerveModule.getPIDController().calculate(m_frontRightSwerveModule.getCANcoder().getAbsolutePosition().getValueAsDouble()));
+    m_backLeftSwerveModule.getSteerMotor().set(m_backLeftSwerveModule.getPIDController().calculate(m_backLeftSwerveModule.getCANcoder().getAbsolutePosition().getValueAsDouble()));
+    m_backRightSwerveModule.getSteerMotor().set(m_backRightSwerveModule.getPIDController().calculate(m_backRightSwerveModule.getCANcoder().getAbsolutePosition().getValueAsDouble()));
     
   
   }
