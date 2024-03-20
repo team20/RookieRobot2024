@@ -50,7 +50,7 @@ public class CalibrationAutoCommand extends Command {
             SmartDashboard.putNumber("current position", currentPosition);
             m_amount += currentPosition; 
         } else {
-            SmartDashboard.putNumber("starting angle", m_driveSubsystem.getFrontLeftSwerveModule().getCANcoder().getPosition().getValueAsDouble());
+            SmartDashboard.putNumber("starting angle", m_driveSubsystem.getFrontLeftSwerveModule().getSteerAngle());
         }
     }
 
@@ -70,19 +70,19 @@ public class CalibrationAutoCommand extends Command {
     public boolean isFinished() {
         switch(m_op){
             case CMD_ANGLE:
-                double encAng = m_driveSubsystem.getFrontLeftSwerveModule().getCANcoder().getPosition().getValueAsDouble() % 360;
+                double encAng = m_driveSubsystem.getFrontLeftSwerveModule().getSteerAngle();
                 double ang1 = encAng - 360;
                 //The error between the actual angle and the target angle
                 double diff1 = Math.abs(encAng - m_amount);
                 double diff2 = Math.abs(ang1 - m_amount);
                 boolean isDone = (Math.min(diff1, diff2) < 2); // 2 degree tolerance
-                if(isDone == false)
-                    return false;
-                SmartDashboard.putNumber("fl_angle", m_driveSubsystem.getFrontLeftSwerveModule().getCANcoder().getPosition().getValueAsDouble());
-                SmartDashboard.putNumber("bl_angle", m_driveSubsystem.getBackLeftSwerveModule().getCANcoder().getPosition().getValueAsDouble());
-                SmartDashboard.putNumber("fr_angle", m_driveSubsystem.getFrontRightSwerveModule().getCANcoder().getPosition().getValueAsDouble());
-                SmartDashboard.putNumber("br_angle", m_driveSubsystem.getBackRightSwerveModule().getCANcoder().getPosition().getValueAsDouble());
-                return true;
+                SmartDashboard.putNumber("fl_angle", m_driveSubsystem.getFrontLeftSwerveModule().getSteerAngle());
+                SmartDashboard.putNumber("bl_angle", m_driveSubsystem.getBackLeftSwerveModule().getSteerAngle());
+                SmartDashboard.putNumber("fr_angle", m_driveSubsystem.getFrontRightSwerveModule().getSteerAngle());
+                SmartDashboard.putNumber("br_angle", m_driveSubsystem.getBackRightSwerveModule().getSteerAngle());
+            
+                //return isDone;
+                return false;
             case CMD_DISTANCE:
                 //Determine whether the target distance has been reached
                 double currentPosition = (m_driveSubsystem.getFrontLeftSwerveModule().getDriveEncoder().getPosition());

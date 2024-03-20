@@ -40,7 +40,6 @@ public class DriveSubsystem extends SubsystemBase {
         DriveConstants.kFrontLeftCANCoderPort, 
         DriveConstants.kFrontLeftDrivePort, 
         DriveConstants.kFrontLeftSteerPort, 
-        SwerveConstants.FrontLeftZero, 
         DriveConstants.kFrontLeftDriveInverted
         );
 
@@ -48,21 +47,18 @@ public class DriveSubsystem extends SubsystemBase {
         DriveConstants.kFrontRightCANCoderPort, 
         DriveConstants.kFrontRightDrivePort, 
         DriveConstants.kFrontRightSteerPort, 
-        SwerveConstants.FrontRightZero, 
         DriveConstants.kFrontRightDriveInverted);
 
       m_backLeftSwerveModule = new SwerveModule(
         DriveConstants.kBackLeftCANCoderPort, 
         DriveConstants.kBackLeftDrivePort, 
         DriveConstants.kBackLeftSteerPort, 
-        SwerveConstants.BackLeftZero, 
         DriveConstants.kBackLeftDriveInverted);
 
       m_backRightSwerveModule = new SwerveModule(
         DriveConstants.kBackRightCANCoderPort, 
         DriveConstants.kBackRightDrivePort, 
         DriveConstants.kBackRightSteerPort, 
-        SwerveConstants.BackRightZero, 
         DriveConstants.kBackRightDriveInverted);
     }
     m_gyro.zeroYaw();
@@ -72,7 +68,6 @@ public class DriveSubsystem extends SubsystemBase {
           m_gyro.reset();
         }catch(Exception e){}
     });
-    resetEncoders();
   }
   double oldVal;
   public double getHeading(){
@@ -90,14 +85,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   public static DriveSubsystem get() {
     return s_subsystem;
-  }
-
-  public void resetEncoders() {
-    // Zero drive encoders
-    m_frontLeftSwerveModule.getDriveEncoder().setPosition(0);
-    m_frontRightSwerveModule.getDriveEncoder().setPosition(0);
-    m_backLeftSwerveModule.getDriveEncoder().setPosition(0);
-    m_backRightSwerveModule.getDriveEncoder().setPosition(0);
   }
 
   public void setWheelRotationToZeroDegrees() {
@@ -176,10 +163,10 @@ public class DriveSubsystem extends SubsystemBase {
     // PID controller, and use it to calculate the duty cycle for its motor, and
     // spin the motor
 
-    m_frontLeftSwerveModule.getSteerMotor().set(m_frontLeftSwerveModule.getPIDController().calculate(m_frontLeftSwerveModule.getCANcoder().getAbsolutePosition().getValueAsDouble()));
-    m_frontRightSwerveModule.getSteerMotor().set(m_frontRightSwerveModule.getPIDController().calculate(m_frontRightSwerveModule.getCANcoder().getAbsolutePosition().getValueAsDouble()));
-    m_backLeftSwerveModule.getSteerMotor().set(m_backLeftSwerveModule.getPIDController().calculate(m_backLeftSwerveModule.getCANcoder().getAbsolutePosition().getValueAsDouble()));
-    m_backRightSwerveModule.getSteerMotor().set(m_backRightSwerveModule.getPIDController().calculate(m_backRightSwerveModule.getCANcoder().getAbsolutePosition().getValueAsDouble()));
+    m_frontLeftSwerveModule.getSteerMotor().set(m_frontLeftSwerveModule.getPIDController().calculate(m_frontLeftSwerveModule.getSteerAngle()));
+    m_frontRightSwerveModule.getSteerMotor().set(m_frontRightSwerveModule.getPIDController().calculate(m_frontRightSwerveModule.getSteerAngle()));
+    m_backLeftSwerveModule.getSteerMotor().set(m_backLeftSwerveModule.getPIDController().calculate(m_backLeftSwerveModule.getSteerAngle()));
+    m_backRightSwerveModule.getSteerMotor().set(m_backRightSwerveModule.getPIDController().calculate(m_backRightSwerveModule.getSteerAngle()));
     
   
   }

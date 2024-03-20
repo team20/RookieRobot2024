@@ -72,9 +72,9 @@ public final class Constants {
 		public static final double kDriveScale = 0.5;
 		// Drive PID values
 		public static final double kP = 0.005;
-		public static final double kI = 0;
+		public static final double kI = 0.045;
 		public static final double kD = 0;
-		public static final double kIz = 0;
+		public static final double kIz = 5;
 		public static final double kFF = 0;
 		public static final double kMinOutput = -1.0;
 		public static final double kMaxOutput = 1.0;
@@ -89,8 +89,8 @@ public final class Constants {
 		/*** Distance between center of left wheel and center of right wheel */
 		public static final double kTrackWidth = 21.5;
 		public static final double kSteerPeriod = 0.02;
-		public static final boolean kFrontLeftDriveInverted = true;
-		public static final boolean kBackLeftDriveInverted = true;
+		public static final boolean kFrontLeftDriveInverted = false;
+		public static final boolean kBackLeftDriveInverted = false;
 		public static final boolean kFrontRightDriveInverted = false;
 		public static final boolean kBackRightDriveInverted = false;
 		// Speed multiplier to make sure the robot doesn't crash into something when
@@ -105,20 +105,5 @@ public final class Constants {
 
         public static final double kTicksToMeters = (1/gearRatio) * Math.PI * wheelDiameter;
 		public static final double kMotorRevsPerMeter = gearRatio/(Math.PI * wheelDiameter);
-
-
-		// These set points resulted in back being front, front is back
-		public static final double FrontLeftZero = 124.89;
-		public static final double FrontRightZero = 115.66;
-		public static final double BackLeftZero = 277.47;
-		public static final double BackRightZero = 212.73;
-
-		// These encoder set points should be correct
-		// public static final double FrontLeftZero = -56.89;
-		// public static final double FrontRightZero = -65.66;
-		// public static final double BackLeftZero = 97.47;
-		// public static final double BackRightZero = 32.73;
-
-
 	}
 }

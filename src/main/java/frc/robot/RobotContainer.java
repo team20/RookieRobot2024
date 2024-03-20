@@ -63,8 +63,9 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return new SequentialCommandGroup(new CalibrationAutoCommand(CalibrationAutoCommand.Operation.CMD_ANGLE, 0),
-                                      new CalibrationAutoCommand(CalibrationAutoCommand.Operation.CMD_DISTANCE, 8));
+    return new SequentialCommandGroup(new CalibrationAutoCommand(CalibrationAutoCommand.Operation.CMD_ANGLE, 0)
+                                      //new CalibrationAutoCommand(CalibrationAutoCommand.Operation.CMD_DISTANCE, 8)
+                                      );
   }
 }
 

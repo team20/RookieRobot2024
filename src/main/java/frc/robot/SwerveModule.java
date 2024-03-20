@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
@@ -26,12 +27,11 @@ public class SwerveModule {
     public RelativeEncoder m_driveEncoder;
     private CANSparkMax m_steerMotor;
 
-    public SwerveModule(int CANport, int drivePort, int steerPort, double magnetOfset, boolean inverted){
+    public SwerveModule(int CANport, int drivePort, int steerPort, boolean inverted){
         m_CANCoder = new CANcoder(CANport);
         m_driveMotor = new CANSparkFlex(drivePort, MotorType.kBrushless);
         m_steerMotor = new CANSparkMax(steerPort, MotorType.kBrushless);
         m_driveEncoder = m_driveMotor.getEncoder();
-        m_CANCoder.setPosition(-magnetOfset);
         configMotorController(m_driveMotor);
         m_driveMotor.setInverted(inverted);
         configMotorController(m_steerMotor);
@@ -64,6 +64,10 @@ public class SwerveModule {
         return this.m_CANCoder;
     }
 
+    public double getSteerAngle() {
+        return m_CANCoder.getAbsolutePosition().getValueAsDouble() * 360;  
+    }
+
 
     public CANSparkFlex getDriveMotor() {
         return this.m_driveMotor;
@@ -85,10 +89,10 @@ public class SwerveModule {
     public void setModuleState(SwerveModuleState state){
         // Will allow the module to spin to 180 deg + target angle
         // but swap drive speed if that is quicker than normal
-        state = SwerveModuleState.optimize(state, state.angle);
+        state = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(getSteerAngle()));
         // Set drive speed
         m_driveMotor.set(state.speedMetersPerSecond * DriveConstants.kDriveScale);
-        m_PIDController.setSetpoint(state.angle.getRotations());
+        m_PIDController.setSetpoint(state.angle.getDegrees());
         //Print state to dashboard
         SmartDashboard.putString("Swerve module " + m_CANCoder.getDeviceID(), state.toString());
     }
