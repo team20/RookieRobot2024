@@ -4,18 +4,15 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.CalibrationAutoCommand;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
-import frc.robot.commands.DefaultDriveCommand;
-// import frc.robot.commands.ResetToZeroDegreesCommand;
-// import frc.robot.subsystems.CounterWeightSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -46,26 +43,23 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    m_driveSubsystem.setDefaultCommand(
-        new DefaultDriveCommand(
-            m_driveSubsystem,
-            () -> m_joystick.getRawAxis(Axis.kLeftX),
-            () -> m_joystick.getRawAxis(Axis.kLeftY),
-            () -> m_joystick.getRawAxis(Axis.kRightX)));
+    m_driveSubsystem.setDefaultDriveCommand(
+      () -> m_joystick.getRawAxis(Axis.kLeftX),
+      () -> m_joystick.getRawAxis(Axis.kLeftY),
+      () -> m_joystick.getRawAxis(Axis.kRightX)
+    );
     // new Trigger(() -> m_controller.getRawButton(ControllerConstants.Button.kTriangle))
-    //     .onTrue(new ResetToZeroDegreesCommand());
+    //   .onTrue(m_driveSubsystem.autoAngleCommand(Rotation2d.fromDegrees(0)));
 
     new Trigger(() -> m_controller.getRawButton(ControllerConstants.Axis.kLeftTrigger))
-        .onTrue(new CalibrationAutoCommand(CalibrationAutoCommand.Operation.CMD_ANGLE, -90));
+      .onTrue(m_driveSubsystem.autoAngleCommand(Rotation2d.fromDegrees(-90)));
         
     new Trigger(() -> m_controller.getRawButton(ControllerConstants.Axis.kRightTrigger))
-        .onTrue(new CalibrationAutoCommand(CalibrationAutoCommand.Operation.CMD_ANGLE, 90));
+      .onTrue(m_driveSubsystem.autoAngleCommand(Rotation2d.fromDegrees(90)));
   }
 
   public Command getAutonomousCommand() {
-    return new SequentialCommandGroup(new CalibrationAutoCommand(CalibrationAutoCommand.Operation.CMD_ANGLE, 0)
-                                      //new CalibrationAutoCommand(CalibrationAutoCommand.Operation.CMD_DISTANCE, 8)
-                                      );
+    return new SequentialCommandGroup(m_driveSubsystem.autoAngleCommand(Rotation2d.fromDegrees(0)));
   }
 }
 

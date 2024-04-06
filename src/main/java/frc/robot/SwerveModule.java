@@ -11,17 +11,19 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.Distance;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SwerveConstants;
 
 /** Add your docs here. */
 public class SwerveModule {
-    private PIDController m_PIDController = new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD, DriveConstants.kSteerPeriod);
+    private PIDController m_PIDController = new PIDController(DriveConstants.kP, 0, 0);
     private CANcoder m_CANCoder;
     private CANSparkFlex m_driveMotor;
     public RelativeEncoder m_driveEncoder;
@@ -36,7 +38,8 @@ public class SwerveModule {
         m_driveMotor.setInverted(inverted);
         configMotorController(m_steerMotor);
         m_PIDController.enableContinuousInput(0, 360);
-        m_driveEncoder.setPositionConversionFactor(1/SwerveConstants.kMotorRevsPerMeter);
+        m_PIDController.setTolerance(DriveConstants.kSwerveAngleTolerance.getDegrees());
+        m_driveEncoder.setPositionConversionFactor(SwerveConstants.kTicksToMeters);
     }
     /***
      * Configures our motors with the exact same settings
@@ -47,49 +50,49 @@ public class SwerveModule {
 
      *                        The CANSparkMax to configure
      */
-    public static void configMotorController(CANSparkBase motorController) {
+    private static void configMotorController(CANSparkBase motorController) {
         motorController.restoreFactoryDefaults();
         motorController.setIdleMode(IdleMode.kBrake);
         motorController.enableVoltageCompensation(12);
         motorController.setSmartCurrentLimit(30);
     }
 
-
-    public PIDController getPIDController() {
-        return this.m_PIDController;
+    public Rotation2d getSteerAngle() {
+        return Rotation2d.fromRotations(m_CANCoder.getAbsolutePosition().getValueAsDouble());  
     }
 
-
-    public CANcoder getCANcoder() {
-        return this.m_CANCoder;
+    public Measure<Distance> getDriveEncoderPosition() {
+        return Units.Meters.of(m_driveEncoder.getPosition());
     }
 
-    public double getSteerAngle() {
-        return m_CANCoder.getAbsolutePosition().getValueAsDouble() * 360;  
+    public void resetDriveEncoder() {
+        m_driveEncoder.setPosition(0);
     }
 
-
-    public CANSparkFlex getDriveMotor() {
-        return this.m_driveMotor;
+    public void periodic() {
+        m_steerMotor.set(m_PIDController.calculate(m_CANCoder.getAbsolutePosition().getValueAsDouble()));
     }
 
-
-    public RelativeEncoder getDriveEncoder() {
-        return this.m_driveEncoder;
+    public void setSetpoint(Rotation2d angle) {
+        m_PIDController.setSetpoint(angle.getDegrees());
     }
 
-    public double getDriveEncoderPosition() {
-        return this.m_driveEncoder.getPosition();
+    public void setPower(double power) {
+        m_driveMotor.set(power);
     }
 
-    public CANSparkMax getSteerMotor() {
-        return this.m_steerMotor;
+    public void stopDriving() {
+        m_driveMotor.stopMotor();
+    }
+
+    public boolean atSetpoint() {
+        return m_PIDController.atSetpoint();
     }
 
     public void setModuleState(SwerveModuleState state){
         // Will allow the module to spin to 180 deg + target angle
         // but swap drive speed if that is quicker than normal
-        state = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(getSteerAngle()));
+        state = SwerveModuleState.optimize(state, getSteerAngle());
         // Set drive speed
         m_driveMotor.set(state.speedMetersPerSecond * DriveConstants.kDriveScale);
         m_PIDController.setSetpoint(state.angle.getDegrees());

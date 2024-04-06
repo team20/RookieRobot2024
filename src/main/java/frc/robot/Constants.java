@@ -6,6 +6,9 @@ package frc.robot;
 
 import com.revrobotics.SparkPIDController.AccelStrategy;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean constants. This class should not be used for any other
@@ -72,10 +75,6 @@ public final class Constants {
 		public static final double kDriveScale = 0.5;
 		// Drive PID values
 		public static final double kP = 0.005;
-		public static final double kI = 0;
-		public static final double kD = 0;
-		public static final double kIz = 0;
-		public static final double kFF = 0;
 		public static final double kMinOutput = -1.0;
 		public static final double kMaxOutput = 1.0;
 		public static final AccelStrategy kTrapezoidal = AccelStrategy.kTrapezoidal;
@@ -88,7 +87,6 @@ public final class Constants {
 		public static final double kWheelBase = 21.5;
 		/*** Distance between center of left wheel and center of right wheel */
 		public static final double kTrackWidth = 21.5;
-		public static final double kSteerPeriod = 0.02;
 		public static final boolean kFrontLeftDriveInverted = false;
 		public static final boolean kBackLeftDriveInverted = false;
 		public static final boolean kFrontRightDriveInverted = false;
@@ -96,14 +94,12 @@ public final class Constants {
 		// Speed multiplier to make sure the robot doesn't crash into something when
 		// testing, because crashing into people's shins would be bad
 		public static final double kSpeedMultiplier = 0.25;
+		public static final Rotation2d kSwerveAngleTolerance = Rotation2d.fromDegrees(2);
 	}
 
 	public static final class SwerveConstants {
 		public static final double gearRatio = 8.14;
-		public static final double wheelDiameter = 0.1016;  // in meters
-		// public static final double ticksPerAxisRev = 42;
-
-        public static final double kTicksToMeters = (1/gearRatio) * Math.PI * wheelDiameter;
-		public static final double kMotorRevsPerMeter = gearRatio/(Math.PI * wheelDiameter);
+		public static final double wheelDiameter = Units.inchesToMeters(4);
+        public static final double kTicksToMeters = Math.PI * wheelDiameter / gearRatio;
 	}
 }
