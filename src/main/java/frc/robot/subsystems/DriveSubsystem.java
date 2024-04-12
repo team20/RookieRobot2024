@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.MathUtil;
@@ -130,14 +131,16 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void setDefaultDriveCommand(DoubleSupplier xAxisDrive, DoubleSupplier yAxisDrive,
-      DoubleSupplier rotationAxis) {
+      BooleanSupplier leftSteer, BooleanSupplier rightSteer) {
     setDefaultCommand(run(() -> {
       // UPDATED to use wpilib swerve calculations
       // Get the foward, strafe, and rotation speed, using a deadband on the joystick
       // input so slight movements don't move the robot
       double fwdSpeed = MathUtil.applyDeadband(yAxisDrive.getAsDouble(), ControllerConstants.kDeadzone);
       double strSpeed = MathUtil.applyDeadband(xAxisDrive.getAsDouble(), ControllerConstants.kDeadzone);
-      double rotSpeed = MathUtil.applyDeadband(rotationAxis.getAsDouble(), ControllerConstants.kDeadzone);
+      double rotSpeed = 0;
+      if(leftSteer.getAsBoolean()) rotSpeed -= DriveConstants.kTurnSpeed;
+      if(rightSteer.getAsBoolean()) rotSpeed += DriveConstants.kTurnSpeed;
 
       ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
         fwdSpeed, strSpeed, rotSpeed, Rotation2d.fromDegrees(-m_gyro.getYaw()));

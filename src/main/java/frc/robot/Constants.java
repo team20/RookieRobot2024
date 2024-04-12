@@ -95,11 +95,34 @@ public final class Constants {
 		// testing, because crashing into people's shins would be bad
 		public static final double kSpeedMultiplier = 0.25;
 		public static final Rotation2d kSwerveAngleTolerance = Rotation2d.fromDegrees(2);
+		public static final double kTurnSpeed = 1; // TODO
 	}
 
 	public static final class SwerveConstants {
 		public static final double gearRatio = 8.14;
 		public static final double wheelDiameter = Units.inchesToMeters(4);
         public static final double kTicksToMeters = Math.PI * wheelDiameter / gearRatio;
+	}
+
+	public static final class ClimberConstants {
+		public static final int kLeftMotorPort = -1; // TODO
+		public static final int kRightMotorPort = -1; // TODO
+	}
+
+	public static final class PivotConstants {
+		public static final int kMotorPort = -1; // TODO
+		public static final double kSpeed = 1; // TODO
+	}
+
+	public static final class PIFConstants {
+		// Get ready to practice your soccer drills! Kick, shoot, pass!
+		public static final int kKickPort = -1; // TODO
+		public static final int kShootPort = -1; // TODO
+		public static final int kPassPort = -1; // TODO
+		public static final int kIntakePort = -1; // TODO
+		public static final double kKickSpeed = 1; // TODO
+		public static final double kShootSpeed = 1; // TODO
+		public static final double kPassSpeed = 1; // TODO
+		public static final double kIntakeSpeed = 1; // TODO
 	}
 }
