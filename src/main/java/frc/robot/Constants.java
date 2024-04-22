@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.revrobotics.SparkPIDController.AccelStrategy;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -89,8 +90,8 @@ public final class Constants {
 		/*** Distance between center of left wheel and center of right wheel */
 		public static final double kTrackWidth = 21.5;
 		public static final double kSteerPeriod = 0.02;
-		public static final boolean kFrontLeftDriveInverted = false;
-		public static final boolean kBackLeftDriveInverted = false;
+		public static final boolean kFrontLeftDriveInverted = true;
+		public static final boolean kBackLeftDriveInverted = true;
 		public static final boolean kFrontRightDriveInverted = false;
 		public static final boolean kBackRightDriveInverted = false;
 		// Speed multiplier to make sure the robot doesn't crash into something when
@@ -99,11 +100,18 @@ public final class Constants {
 	}
 
 	public static final class SwerveConstants {
-		public static final double gearRatio = 8.14;
-		public static final double wheelDiameter = 0.1016;  // in meters
-		// public static final double ticksPerAxisRev = 42;
+		public static final double kGearRatio = 8.14;
+		public static final double kWheelDiameter = Units.inchesToMeters(4);
+        public static final double kTicksToMeters = Math.PI * kWheelDiameter / kGearRatio;
+	}
 
-        public static final double kTicksToMeters = (1/gearRatio) * Math.PI * wheelDiameter;
-		public static final double kMotorRevsPerMeter = gearRatio/(Math.PI * wheelDiameter);
+	public static final class IntakeConstants {
+		public static final int kPort = 57;
+		public static final double kSpeed = 0.5;
+	}
+
+	public static final class ClimberConstants {
+		public static final int kLeftMotorPort = -1; // TODO
+		public static final int kRightMotorPort = -1; // TODO
 	}
 }

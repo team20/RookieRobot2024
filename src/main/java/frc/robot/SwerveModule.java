@@ -36,7 +36,7 @@ public class SwerveModule {
         m_driveMotor.setInverted(inverted);
         configMotorController(m_steerMotor);
         m_PIDController.enableContinuousInput(0, 360);
-        m_driveEncoder.setPositionConversionFactor(1/SwerveConstants.kMotorRevsPerMeter);
+        m_driveEncoder.setPositionConversionFactor(SwerveConstants.kTicksToMeters);
     }
     /***
      * Configures our motors with the exact same settings
