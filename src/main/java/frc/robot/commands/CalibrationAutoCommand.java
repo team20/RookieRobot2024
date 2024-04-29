@@ -81,8 +81,7 @@ public class CalibrationAutoCommand extends Command {
                 SmartDashboard.putNumber("fr_angle", m_driveSubsystem.getFrontRightSwerveModule().getSteerAngle());
                 SmartDashboard.putNumber("br_angle", m_driveSubsystem.getBackRightSwerveModule().getSteerAngle());
             
-                //return isDone;
-                return false;
+                return isDone;
             case CMD_DISTANCE:
                 //Determine whether the target distance has been reached
                 double currentPosition = (m_driveSubsystem.getFrontLeftSwerveModule().getDriveEncoder().getPosition());

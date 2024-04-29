@@ -107,11 +107,19 @@ public final class Constants {
 
 	public static final class IntakeConstants {
 		public static final int kPort = 57;
-		public static final double kSpeed = 0.5;
+		public static final double kSpeed = 1;
 	}
 
 	public static final class ClimberConstants {
 		public static final int kLeftMotorPort = -1; // TODO
 		public static final int kRightMotorPort = -1; // TODO
+	}
+
+	public static final class ShooterConstants {
+		public static final int kTopPort = 50;
+		public static final int kBottomPort = 52;
+		public static final boolean kTopReversed = false;
+		public static final boolean kBottomReversed = false;
+		public static final double kSpeed = 1;
 	}
 }

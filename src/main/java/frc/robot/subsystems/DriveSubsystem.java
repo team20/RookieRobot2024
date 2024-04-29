@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.SwerveConstants;
 
 public class DriveSubsystem extends SubsystemBase {
   private SwerveModule m_frontLeftSwerveModule;
