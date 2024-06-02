@@ -110,9 +110,15 @@ public final class Constants {
 		public static final double kSpeed = 1;
 	}
 
+	public static final class TransportConstants {
+		public static final int kPort = 58;
+		public static final double kSpeed = 1;
+	}
+
 	public static final class ClimberConstants {
-		public static final int kLeftMotorPort = -1; // TODO
-		public static final int kRightMotorPort = -1; // TODO
+		public static final int kLeftMotorPort = 53;
+		public static final int kRightMotorPort = 51;
+		public static final double kSpeed = 0.3;
 	}
 
 	public static final class ShooterConstants {

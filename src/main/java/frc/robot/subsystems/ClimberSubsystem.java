@@ -19,8 +19,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
     public void bindButtons(DoubleSupplier leftMotor, DoubleSupplier rightMotor) {
         setDefaultCommand(run(() -> {
-            m_leftMotor.set(MathUtil.applyDeadband(leftMotor.getAsDouble(), ControllerConstants.kDeadzone));
-            m_rightMotor.set(MathUtil.applyDeadband(rightMotor.getAsDouble(), ControllerConstants.kDeadzone));
+            m_leftMotor.set(MathUtil.applyDeadband(leftMotor.getAsDouble(), ControllerConstants.kTriggerDeadzone) * ClimberConstants.kSpeed);
+            m_rightMotor.set(MathUtil.applyDeadband(rightMotor.getAsDouble(), ControllerConstants.kTriggerDeadzone) * ClimberConstants.kSpeed);
         }));
     }
 }

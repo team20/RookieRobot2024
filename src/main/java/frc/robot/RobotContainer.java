@@ -19,6 +19,7 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.TransportSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -33,6 +34,7 @@ public class RobotContainer {
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
   private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
+  private final TransportSubsystem m_transportSubsystem = new TransportSubsystem();
   // private final CounterWeightSubsystem m_counterWeightSubsystem = new CounterWeightSubsystem();
 
   /**
@@ -61,14 +63,19 @@ public class RobotContainer {
       m_controller.povUp(loop),
       m_controller.povDown(loop)
     );
-    m_climberSubsystem.bindButtons(
-      () -> m_controller.getRawAxis(Axis.kLeftY),
-      () -> m_controller.getRawAxis(Axis.kRightY)
-    );
+    /*m_climberSubsystem.bindButtons(
+      () -> m_controller.getRawAxis(Axis.kLeftTrigger),
+      () -> m_controller.getRawAxis(Axis.kRightTrigger)
+    );*/
     m_shooterSubsystem.bindButtons(
       m_controller.button(Button.kSquare,loop),
       m_controller.button(Button.kCircle,loop)
     );
+
+    m_transportSubsystem.bindButtons(
+        m_controller.button(Button.kRightBumper, loop),
+        m_controller.button(Button.kLeftBumper, loop)
+      );
   }
 
   public Command getAutonomousCommand() {
