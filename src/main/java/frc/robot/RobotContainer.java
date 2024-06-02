@@ -15,7 +15,7 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.DefaultDriveCommand;
-//import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -31,7 +31,7 @@ public class RobotContainer {
   private final GenericHID m_controller = new GenericHID(ControllerConstants.kDriverControllerPort);
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
-  //private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
+  private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
   private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
   // private final CounterWeightSubsystem m_counterWeightSubsystem = new CounterWeightSubsystem();
 
@@ -61,10 +61,10 @@ public class RobotContainer {
       m_controller.povUp(loop),
       m_controller.povDown(loop)
     );
-    /*m_climberSubsystem.bindButtons(
+    m_climberSubsystem.bindButtons(
       () -> m_controller.getRawAxis(Axis.kLeftY),
       () -> m_controller.getRawAxis(Axis.kRightY)
-    );*/
+    );
     m_shooterSubsystem.bindButtons(
       m_controller.button(Button.kSquare,loop),
       m_controller.button(Button.kCircle,loop)
