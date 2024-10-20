@@ -124,8 +124,11 @@ public final class Constants {
 	public static final class ShooterConstants {
 		public static final int kTopPort = 50;
 		public static final int kBottomPort = 52;
+		public static final int kKickPort = 54;
+		public static final boolean kKickReversed = false;
 		public static final boolean kTopReversed = false;
 		public static final boolean kBottomReversed = false;
-		public static final double kSpeed = 1;
+		public static final double kShootSpeed = 1;
+		public static final double kKickSpeed = 0.1;
 	}
 }

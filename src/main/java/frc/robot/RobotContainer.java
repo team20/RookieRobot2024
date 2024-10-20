@@ -29,7 +29,8 @@ import frc.robot.subsystems.TransportSubsystem;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final GenericHID m_controller = new GenericHID(ControllerConstants.kDriverControllerPort);
+  private final GenericHID m_driverController = new GenericHID(ControllerConstants.kDriverControllerPort);
+  private final GenericHID m_operatorController = new GenericHID(ControllerConstants.kDriverControllerPort);
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
@@ -56,25 +57,27 @@ public class RobotContainer {
     m_driveSubsystem.setDefaultCommand(
         new DefaultDriveCommand(
             m_driveSubsystem,
-            () -> m_controller.getRawAxis(Axis.kLeftX),
-            () -> m_controller.getRawAxis(Axis.kLeftY),
-            () -> m_controller.getRawAxis(Axis.kRightX)));
+            () -> m_driverController.getRawAxis(Axis.kLeftX),
+            () -> m_driverController.getRawAxis(Axis.kLeftY),
+            () -> m_driverController.getRawAxis(Axis.kRightX)));
     m_intakeSubsystem.bindButtons(
-      m_controller.povUp(loop),
-      m_controller.povDown(loop)
+      m_operatorController.povUp(loop),
+      m_operatorController.povDown(loop)
     );
-    /*m_climberSubsystem.bindButtons(
-      () -> m_controller.getRawAxis(Axis.kLeftTrigger),
-      () -> m_controller.getRawAxis(Axis.kRightTrigger)
-    );*/
+    m_climberSubsystem.bindButtons(
+      () -> m_operatorController.getRawAxis(Axis.kLeftTrigger),
+      () -> m_operatorController.getRawAxis(Axis.kRightTrigger)
+    );
     m_shooterSubsystem.bindButtons(
-      m_controller.button(Button.kSquare,loop),
-      m_controller.button(Button.kCircle,loop)
+      m_driverController.button(Button.kSquare,loop),
+      m_driverController.button(Button.kCircle,loop),
+      m_operatorController.button(Button.kTriangle,loop),
+      m_operatorController.button(Button.kX,loop)
     );
 
     m_transportSubsystem.bindButtons(
-        m_controller.button(Button.kRightBumper, loop),
-        m_controller.button(Button.kLeftBumper, loop)
+        m_operatorController.button(Button.kRightBumper, loop),
+        m_operatorController.button(Button.kLeftBumper, loop)
       );
   }
 

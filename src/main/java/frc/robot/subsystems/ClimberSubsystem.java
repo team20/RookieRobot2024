@@ -15,14 +15,12 @@ public class ClimberSubsystem extends SubsystemBase {
     public ClimberSubsystem() {
         m_leftMotor = new CANSparkMax(ClimberConstants.kLeftMotorPort, MotorType.kBrushless);
         m_rightMotor = new CANSparkMax(ClimberConstants.kRightMotorPort, MotorType.kBrushless);
-        
         m_leftMotor.follow(m_rightMotor);
     }
 
     public void bindButtons(DoubleSupplier leftTrigger, DoubleSupplier rightTrigger) {
         setDefaultCommand(run(() -> {
             m_rightMotor.set(MathUtil.applyDeadband(((rightTrigger.getAsDouble() + 1) / 2), ControllerConstants.kTriggerDeadzone) * ClimberConstants.kSpeed);
-            m_rightMotor.set(MathUtil.applyDeadband(-((leftTrigger.getAsDouble() + 1) / 2), ControllerConstants.kTriggerDeadzone) * ClimberConstants.kSpeed);
         }));
     }
 }
