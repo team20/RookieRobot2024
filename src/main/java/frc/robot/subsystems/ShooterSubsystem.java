@@ -21,13 +21,11 @@ public class ShooterSubsystem  extends SubsystemBase {
         m_bottomMotor.follow(m_topMotor);
     }
 
-    public void bindButtons(BooleanSupplier shootIn, BooleanSupplier shootOut, BooleanSupplier kickIn, BooleanSupplier kickOut) {
+    public void bindButtons(BooleanSupplier shoot, BooleanSupplier kickIn, BooleanSupplier kickOut) {
         setDefaultCommand(run(() -> {
-            boolean in = shootIn.getAsBoolean();
-            boolean out = shootOut.getAsBoolean();
-            m_topMotor.set((in && !out ? 1 : out && !in ? -1 : 0) * ShooterConstants.kShootSpeed);
-            in = kickIn.getAsBoolean();
-            out = kickOut.getAsBoolean();
+            m_topMotor.set(shoot.getAsBoolean() ? ShooterConstants.kShootSpeed : 0);
+            boolean in = kickIn.getAsBoolean();
+            boolean out = kickOut.getAsBoolean();
             m_kickMotor.set((in && !out ? 1 : out && !in ? -1 : 0) * ShooterConstants.kKickSpeed);
         }));
     }

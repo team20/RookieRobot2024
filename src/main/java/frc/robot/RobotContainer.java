@@ -30,7 +30,7 @@ import frc.robot.subsystems.TransportSubsystem;
  */
 public class RobotContainer {
   private final GenericHID m_driverController = new GenericHID(ControllerConstants.kDriverControllerPort);
-  private final GenericHID m_operatorController = new GenericHID(ControllerConstants.kDriverControllerPort);
+  private final GenericHID m_operatorController = new GenericHID(ControllerConstants.kOperatorControllerPort);
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
@@ -70,7 +70,6 @@ public class RobotContainer {
     );
     m_shooterSubsystem.bindButtons(
       m_driverController.button(Button.kSquare,loop),
-      m_driverController.button(Button.kCircle,loop),
       m_operatorController.button(Button.kTriangle,loop),
       m_operatorController.button(Button.kX,loop)
     );

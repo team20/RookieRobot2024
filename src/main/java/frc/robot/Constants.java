@@ -96,7 +96,7 @@ public final class Constants {
 		public static final boolean kBackRightDriveInverted = false;
 		// Speed multiplier to make sure the robot doesn't crash into something when
 		// testing, because crashing into people's shins would be bad
-		public static final double kSpeedMultiplier = 0.25;
+		public static final double kSpeedMultiplier = 0.5;
 	}
 
 	public static final class SwerveConstants {
