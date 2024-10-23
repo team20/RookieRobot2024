@@ -10,16 +10,16 @@ import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.CalibrationAutoCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
-import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransportSubsystem;
+import frc.robot.subsystems.DriveSubsystem.Operation;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -54,12 +54,11 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     EventLoop loop = CommandScheduler.getInstance().getActiveButtonLoop();
-    m_driveSubsystem.setDefaultCommand(
-        new DefaultDriveCommand(
-            m_driveSubsystem,
-            () -> m_driverController.getRawAxis(Axis.kLeftX),
-            () -> m_driverController.getRawAxis(Axis.kLeftY),
-            () -> m_driverController.getRawAxis(Axis.kRightX)));
+    m_driveSubsystem.bindButtons(
+      () -> m_driverController.getRawAxis(Axis.kLeftX),
+      () -> m_driverController.getRawAxis(Axis.kLeftY),
+      () -> m_driverController.getRawAxis(Axis.kRightX)
+    );
     m_intakeSubsystem.bindButtons(
       m_operatorController.povUp(loop),
       m_operatorController.povDown(loop)
@@ -73,17 +72,18 @@ public class RobotContainer {
       m_operatorController.button(Button.kTriangle,loop),
       m_operatorController.button(Button.kX,loop)
     );
-
     m_transportSubsystem.bindButtons(
-        m_operatorController.button(Button.kRightBumper, loop),
-        m_operatorController.button(Button.kLeftBumper, loop)
-      );
+      m_operatorController.button(Button.kRightBumper, loop),
+      m_operatorController.button(Button.kLeftBumper, loop)
+    );
+    new Trigger(m_driverController.button(Button.kRightBumper, loop)).onTrue(m_driveSubsystem.resetHeadingCommand());
   }
 
   public Command getAutonomousCommand() {
-    return new SequentialCommandGroup(new CalibrationAutoCommand(CalibrationAutoCommand.Operation.CMD_ANGLE, 0)
-                                      //new CalibrationAutoCommand(CalibrationAutoCommand.Operation.CMD_DISTANCE, 8)
-                                      );
+    return new SequentialCommandGroup(
+      m_driveSubsystem.autoCommand(Operation.CMD_ANGLE, 0),
+      m_driveSubsystem.autoCommand(Operation.CMD_DISTANCE, 8)
+    );
   }
 }
 

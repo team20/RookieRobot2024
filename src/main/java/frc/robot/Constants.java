@@ -5,6 +5,8 @@
 package frc.robot;
 
 import com.revrobotics.SparkPIDController.AccelStrategy;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -22,7 +24,10 @@ public final class Constants {
 		public static final int kDriverControllerPort = 0;
 		public static final int kOperatorControllerPort = 1;
 		public static final double kDeadzone = 0.2;
-		public static final double kTriggerDeadzone = .05;
+
+		public static double triggerDeadZone(double value) {
+			return  MathUtil.applyDeadband(value, .05);
+		}
 
 		public static final class Axis {
 			public static final int kLeftX = 0;
@@ -118,6 +123,8 @@ public final class Constants {
 	public static final class ClimberConstants {
 		public static final int kLeftMotorPort = 53;
 		public static final int kRightMotorPort = 51;
+		public static final boolean kLeftReversed = false;
+		public static final boolean kRightReversed = false;
 		public static final double kSpeed = 0.3;
 	}
 
