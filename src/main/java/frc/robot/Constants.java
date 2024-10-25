@@ -121,10 +121,8 @@ public final class Constants {
 	}
 
 	public static final class ClimberConstants {
-		public static final int kLeftMotorPort = 53;
-		public static final int kRightMotorPort = 51;
-		public static final boolean kLeftReversed = false;
-		public static final boolean kRightReversed = false;
+		public static final JonahsMotor kLeftMotor = new JonahsMotor(53, true);
+		public static final JonahsMotor kRightMotor = new JonahsMotor(51, false);
 		public static final double kSpeed = 0.3;
 	}
 

@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.ControllerConstants;
@@ -12,10 +11,8 @@ public class ClimberSubsystem extends SubsystemBase {
     private CANSparkMax m_rightMotor;
 
     public ClimberSubsystem() {
-        m_leftMotor = new CANSparkMax(ClimberConstants.kLeftMotorPort, MotorType.kBrushless);
-        m_rightMotor = new CANSparkMax(ClimberConstants.kRightMotorPort, MotorType.kBrushless);
-        m_leftMotor.setInverted(ClimberConstants.kLeftReversed);
-        m_rightMotor.setInverted(ClimberConstants.kRightReversed);
+        m_leftMotor = ClimberConstants.kLeftMotor.init();
+        m_rightMotor = ClimberConstants.kRightMotor.init();
         m_leftMotor.follow(m_rightMotor);
     }
 
