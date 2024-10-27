@@ -126,6 +126,11 @@ public final class Constants {
 		public static final double kSpeed = 0.3;
 	}
 
+	public static final class PivotConstants {
+		public static final JonahsMotor kMotor = new JonahsMotor(56, false);
+		public static final double kSpeed = 0.3;
+	}
+
 	public static final class ShooterConstants {
 		public static final int kTopPort = 50;
 		public static final int kBottomPort = 52;

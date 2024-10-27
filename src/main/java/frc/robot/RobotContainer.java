@@ -17,6 +17,7 @@ import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransportSubsystem;
 import frc.robot.subsystems.DriveSubsystem.Operation;
@@ -34,6 +35,7 @@ public class RobotContainer {
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
+  private final PivotSubsystem m_pivotSubsystem = new PivotSubsystem();
   private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
   private final TransportSubsystem m_transportSubsystem = new TransportSubsystem();
   // private final CounterWeightSubsystem m_counterWeightSubsystem = new CounterWeightSubsystem();
@@ -55,26 +57,29 @@ public class RobotContainer {
   private void configureButtonBindings() {
     EventLoop loop = CommandScheduler.getInstance().getActiveButtonLoop();
     m_driveSubsystem.bindButtons(
-      () -> m_driverController.getRawAxis(Axis.kLeftX),
-      () -> m_driverController.getRawAxis(Axis.kLeftY),
+      () -> m_driverController.getRawAxis(Axis.kLeftX ),
+      () -> m_driverController.getRawAxis(Axis.kLeftY ),
       () -> m_driverController.getRawAxis(Axis.kRightX)
     );
     m_intakeSubsystem.bindButtons(
-      m_operatorController.povUp(loop),
+      m_operatorController.povUp(  loop),
       m_operatorController.povDown(loop)
     );
-    m_climberSubsystem.bindButtons(
+    m_pivotSubsystem.bindButtons(
       () -> m_operatorController.getRawAxis(Axis.kLeftTrigger),
       () -> m_operatorController.getRawAxis(Axis.kRightTrigger)
     );
+    m_climberSubsystem.bindButtons(
+      () -> m_operatorController.getRawAxis(Axis.kRightY)
+    );
     m_shooterSubsystem.bindButtons(
-      m_driverController.button(Button.kSquare,loop),
-      m_operatorController.button(Button.kTriangle,loop),
-      m_operatorController.button(Button.kX,loop)
+      m_driverController  .button(Button.kSquare,   loop),
+      m_operatorController.button(Button.kTriangle, loop),
+      m_operatorController.button(Button.kX,        loop)
     );
     m_transportSubsystem.bindButtons(
       m_operatorController.button(Button.kRightBumper, loop),
-      m_operatorController.button(Button.kLeftBumper, loop)
+      m_operatorController.button(Button.kLeftBumper,  loop)
     );
     new Trigger(m_driverController.button(Button.kRightBumper, loop)).onTrue(m_driveSubsystem.resetHeadingCommand());
   }
