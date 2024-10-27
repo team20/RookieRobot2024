@@ -13,12 +13,13 @@ public class ClimberSubsystem extends SubsystemBase {
     public ClimberSubsystem() {
         m_leftMotor = ClimberConstants.kLeftMotor.init();
         m_rightMotor = ClimberConstants.kRightMotor.init();
-        m_leftMotor.follow(m_rightMotor);
     }
 
     public void bindButtons(DoubleSupplier stick) {
-        setDefaultCommand(run(() ->
-            m_rightMotor.set(ControllerConstants.triggerDeadZone(stick.getAsDouble()) * ClimberConstants.kSpeed)
-        ));
+        setDefaultCommand(run(() -> {
+            double speed = ControllerConstants.triggerDeadZone(stick.getAsDouble()) * ClimberConstants.kSpeed;
+            m_rightMotor.set(speed);
+            m_leftMotor.set(speed);
+        }));
     }
 }

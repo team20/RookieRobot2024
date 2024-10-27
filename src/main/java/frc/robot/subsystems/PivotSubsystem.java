@@ -18,8 +18,8 @@ public class PivotSubsystem extends SubsystemBase {
 
     public void bindButtons(DoubleSupplier leftTrigger, DoubleSupplier rightTrigger) {
         setDefaultCommand(run(() -> {
-            double speed = ControllerConstants.triggerDeadZone(rightTrigger.getAsDouble() + 1);
-            speed -= ControllerConstants.triggerDeadZone(leftTrigger.getAsDouble() + 1);
+            double speed = ControllerConstants.triggerDeadZone(rightTrigger.getAsDouble());
+            speed -= ControllerConstants.triggerDeadZone(leftTrigger.getAsDouble());
             m_motor.set(speed * PivotConstants.kSpeed);
         }));
     }

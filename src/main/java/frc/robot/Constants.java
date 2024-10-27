@@ -117,18 +117,18 @@ public final class Constants {
 
 	public static final class TransportConstants {
 		public static final int kPort = 58;
-		public static final double kSpeed = 1;
+		public static final double kSpeed = .5;
 	}
 
 	public static final class ClimberConstants {
-		public static final JonahsMotor kLeftMotor = new JonahsMotor(53, true);
-		public static final JonahsMotor kRightMotor = new JonahsMotor(51, false);
-		public static final double kSpeed = 0.3;
+		public static final JonahsMotor kLeftMotor = new JonahsMotor(53, false);
+		public static final JonahsMotor kRightMotor = new JonahsMotor(51, true);
+		public static final double kSpeed = -0.3;
 	}
 
 	public static final class PivotConstants {
-		public static final JonahsMotor kMotor = new JonahsMotor(56, false);
-		public static final double kSpeed = 0.3;
+		public static final JonahsMotor kMotor = new JonahsMotor(56, true);
+		public static final double kSpeed = 1;
 	}
 
 	public static final class ShooterConstants {

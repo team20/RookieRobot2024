@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
+
 import java.util.function.BooleanSupplier;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -12,6 +14,7 @@ public class TransportSubsystem extends SubsystemBase {
 
     public TransportSubsystem() {
         m_motor = new CANSparkMax(TransportConstants.kPort, MotorType.kBrushless);
+        m_motor.setIdleMode(IdleMode.kBrake);
     }
 
     public void bindButtons(BooleanSupplier up, BooleanSupplier down) {
