@@ -4,9 +4,13 @@
 
 package frc.robot;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.EventLoop;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -32,6 +36,8 @@ import frc.robot.subsystems.DriveSubsystem.Operation;
 public class RobotContainer {
   private final GenericHID m_driverController = new GenericHID(ControllerConstants.kDriverControllerPort);
   private final GenericHID m_operatorController = new GenericHID(ControllerConstants.kOperatorControllerPort);
+  private final SendableChooser<Supplier<Command>> m_autoSelector = new SendableChooser<>();
+  private final SendableChooser<Integer> m_distanceSelector = new SendableChooser<>();
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
@@ -44,8 +50,24 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // Configure the button bindings
+    // Configure the button bindings 
     configureButtonBindings();
+    // Auto chooser
+    m_distanceSelector.addOption("8", 8);
+    m_distanceSelector.addOption("40", 40);
+    m_distanceSelector.addOption("80", 80);
+    m_distanceSelector.addOption("400", 400);
+    m_distanceSelector.addOption("800", 800);
+    SmartDashboard.putData(m_distanceSelector);
+    m_autoSelector.addOption("Auto #1", () -> new SequentialCommandGroup(
+      m_driveSubsystem.autoCommand(Operation.CMD_ANGLE, 0),
+      m_driveSubsystem.autoCommand(Operation.CMD_DISTANCE, m_distanceSelector.getSelected())
+    ));
+    m_autoSelector.addOption("Auto #2", () -> new SequentialCommandGroup(
+      m_driveSubsystem.autoCommand(Operation.CMD_DISTANCE, m_distanceSelector.getSelected()),
+      m_driveSubsystem.autoCommand(Operation.CMD_DISTANCE, -m_distanceSelector.getSelected())
+    ));
+    SmartDashboard.putData(m_autoSelector);
   }
 
   /**
@@ -85,14 +107,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return new SequentialCommandGroup(
-      m_driveSubsystem.autoCommand(Operation.CMD_ANGLE, 0),
-      m_driveSubsystem.autoCommand(Operation.CMD_DISTANCE, 8)
-    );
+    return m_autoSelector.getSelected().get();
   }
 }
-
-
-
-
-
