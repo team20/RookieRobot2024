@@ -11,9 +11,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
@@ -54,42 +54,21 @@ public class SwerveModule {
         motorController.setSmartCurrentLimit(30);
     }
 
-
-    public PIDController getPIDController() {
-        return this.m_PIDController;
+    public void updatePID() {
+        m_steerMotor.set(m_PIDController.calculate(getPosition().angle.getDegrees()));
     }
 
-
-    public CANcoder getCANcoder() {
-        return this.m_CANCoder;
-    }
-
-    public double getSteerAngle() {
-        return m_CANCoder.getAbsolutePosition().getValueAsDouble() * 360;  
-    }
-
-
-    public CANSparkFlex getDriveMotor() {
-        return this.m_driveMotor;
-    }
-
-
-    public RelativeEncoder getDriveEncoder() {
-        return this.m_driveEncoder;
-    }
-
-    public double getDriveEncoderPosition() {
-        return this.m_driveEncoder.getPosition();
-    }
-
-    public CANSparkMax getSteerMotor() {
-        return this.m_steerMotor;
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(
+            m_driveEncoder.getPosition(),
+            Rotation2d.fromRotations(m_CANCoder.getAbsolutePosition().getValueAsDouble())
+        );
     }
 
     public void setModuleState(SwerveModuleState state){
         // Will allow the module to spin to 180 deg + target angle
         // but swap drive speed if that is quicker than normal
-        state = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(getSteerAngle()));
+        state = SwerveModuleState.optimize(state, getPosition().angle);
         // Set drive speed
         m_driveMotor.set(state.speedMetersPerSecond * DriveConstants.kDriveScale);
         m_PIDController.setSetpoint(state.angle.getDegrees());

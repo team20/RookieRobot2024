@@ -4,8 +4,10 @@
 
 package frc.robot;
 
+import java.util.Random;
 import java.util.function.Supplier;
-
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.EventLoop;
@@ -13,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
@@ -24,7 +26,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransportSubsystem;
-import frc.robot.subsystems.DriveSubsystem.Operation;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -53,20 +54,24 @@ public class RobotContainer {
     // Configure the button bindings 
     configureButtonBindings();
     // Auto chooser
-    m_distanceSelector.addOption("8", 8);
-    m_distanceSelector.addOption("40", 40);
-    m_distanceSelector.addOption("80", 80);
-    m_distanceSelector.addOption("400", 400);
-    m_distanceSelector.addOption("800", 800);
+    m_distanceSelector.addOption("1", 1);
+    m_distanceSelector.addOption("5", 5);
+    m_distanceSelector.addOption("10", 10);
+    m_distanceSelector.addOption("50", 50);
+    m_distanceSelector.addOption("100", 100);
     SmartDashboard.putData(m_distanceSelector);
-    m_autoSelector.addOption("Auto #1", () -> new SequentialCommandGroup(
-      m_driveSubsystem.autoCommand(Operation.CMD_ANGLE, 0),
-      m_driveSubsystem.autoCommand(Operation.CMD_DISTANCE, m_distanceSelector.getSelected())
+    m_autoSelector.addOption("Go forward", () -> m_driveSubsystem.autoCommand(
+      new Pose2d(m_distanceSelector.getSelected(), 0, new Rotation2d())
     ));
-    m_autoSelector.addOption("Auto #2", () -> new SequentialCommandGroup(
-      m_driveSubsystem.autoCommand(Operation.CMD_DISTANCE, m_distanceSelector.getSelected()),
-      m_driveSubsystem.autoCommand(Operation.CMD_DISTANCE, -m_distanceSelector.getSelected())
+    m_autoSelector.addOption("Spin", () -> m_driveSubsystem.autoCommand(
+      new Pose2d(0, 0, Rotation2d.fromRotations(1))
     ));
+    Random r = new Random();
+    m_autoSelector.addOption("Luck",
+      () -> Commands.waitUntil(() -> r.nextDouble() < 0.000001)
+      .andThen(Commands.print("You got lucky!"))
+    );
+    m_autoSelector.addOption("Idle", () -> Commands.idle());
     SmartDashboard.putData(m_autoSelector);
   }
 

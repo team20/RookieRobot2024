@@ -4,14 +4,16 @@
 
 package frc.robot.subsystems;
 
-import java.util.concurrent.atomic.DoubleAdder;
 import java.util.function.DoubleSupplier;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,6 +33,7 @@ public class DriveSubsystem extends SubsystemBase {
   private Translation2d m_frontRightLocation = new Translation2d(0.3, -0.3);
   private Translation2d m_backLeftLocation = new Translation2d(-0.3, 0.3);
   private Translation2d m_backRightLocation = new Translation2d(-0.3, -0.3);
+  private SwerveDriveOdometry m_odometry;
   private AHRS m_gyro = new AHRS(SPI.Port.kMXP); 
 
   public static enum Operation {
@@ -71,52 +74,18 @@ public class DriveSubsystem extends SubsystemBase {
       m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation
     );
     m_gyro.zeroYaw();
-    new Thread(() -> {
-        try{
-          Thread.sleep(1000);
-          m_gyro.reset();
-        }catch(Exception e){}
-    });
+    m_odometry = new SwerveDriveOdometry(
+      m_kinematics, m_gyro.getRotation2d().unaryMinus(), getSwerveModulePositions()
+    );
   }
 
-  /**
-   * Makes our drive motors spin at the specified speeds
-   * 
-   * @param frontLeftSpeed
-   *                        Speed of the front left wheel in duty cycles [-1, 1]
-   * @param frontRightSpeed
-   *                        Speed of the front right wheel in duty cycles [-1, 1]
-   * @param backLeftSpeed
-   *                        Speed of the back left wheel in duty cycles [-1, 1]
-   * @param backRightSpeed
-   *                        Speed of the back right wheel in duty cycles [-1, 1]
-   */
-  public void setDriveMotors(double frontLeftSpeed, double frontRightSpeed, double backLeftSpeed,
-      double backRightSpeed) {
-    m_frontLeftSwerveModule.getDriveMotor().set(frontLeftSpeed * DriveConstants.kDriveScale);
-    m_frontRightSwerveModule.getDriveMotor().set(frontRightSpeed * DriveConstants.kDriveScale);
-    m_backLeftSwerveModule.getDriveMotor().set(backLeftSpeed * DriveConstants.kDriveScale);
-    m_backRightSwerveModule.getDriveMotor().set(backRightSpeed * DriveConstants.kDriveScale);
-  }
-
-  /***
-   * Sets the target angles in degrees for each wheel on the robot
-   * 
-   * @param frontLeftAngle
-   *                        The target angle of the front left wheel in degrees
-   * @param frontRightAngle
-   *                        The target angle of the front right wheel in degrees
-   * @param backLeftAngle
-   *                        The target angle of the back left wheel in degrees
-   * @param backRightAngle
-   *                        The target angle of the back right wheel in degrees
-   */
-  public void setSteerMotors(double frontLeftAngle, double frontRightAngle, double backLeftAngle,
-      double backRightAngle) {
-    m_frontLeftSwerveModule.getPIDController().setSetpoint(frontLeftAngle);
-    m_frontRightSwerveModule.getPIDController().setSetpoint(frontRightAngle);
-    m_backLeftSwerveModule.getPIDController().setSetpoint(backLeftAngle);
-    m_backRightSwerveModule.getPIDController().setSetpoint(backRightAngle);
+  private SwerveModulePosition[] getSwerveModulePositions() {
+    return new SwerveModulePosition[]{
+      m_frontLeftSwerveModule.getPosition(),
+      m_frontRightSwerveModule.getPosition(),
+      m_backLeftSwerveModule.getPosition(),
+      m_backRightSwerveModule.getPosition(),
+    };
   }
 
   public void setSwerveStates(SwerveModuleState[] moduleStates){
@@ -151,10 +120,11 @@ public class DriveSubsystem extends SubsystemBase {
     // PID controller, and use it to calculate the duty cycle for its motor, and
     // spin the motor
 
-    m_frontLeftSwerveModule.getSteerMotor().set(m_frontLeftSwerveModule.getPIDController().calculate(m_frontLeftSwerveModule.getSteerAngle()));
-    m_frontRightSwerveModule.getSteerMotor().set(m_frontRightSwerveModule.getPIDController().calculate(m_frontRightSwerveModule.getSteerAngle()));
-    m_backLeftSwerveModule.getSteerMotor().set(m_backLeftSwerveModule.getPIDController().calculate(m_backLeftSwerveModule.getSteerAngle()));
-    m_backRightSwerveModule.getSteerMotor().set(m_backRightSwerveModule.getPIDController().calculate(m_backRightSwerveModule.getSteerAngle()));
+    m_frontLeftSwerveModule.updatePID();
+    m_frontRightSwerveModule.updatePID();
+    m_backLeftSwerveModule.updatePID();
+    m_backRightSwerveModule.updatePID();
+    m_odometry.update(m_gyro.getRotation2d().unaryMinus(), getSwerveModulePositions());
   }
 
   public void bindButtons(DoubleSupplier xAxisDrive, DoubleSupplier yAxisDrive, DoubleSupplier rotationAxis) {
@@ -166,8 +136,13 @@ public class DriveSubsystem extends SubsystemBase {
       double strSpeed = MathUtil.applyDeadband(xAxisDrive.getAsDouble(), ControllerConstants.kDeadzone);
       double rotSpeed = MathUtil.applyDeadband(rotationAxis.getAsDouble(), ControllerConstants.kDeadzone);
 
-      ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        fwdSpeed, strSpeed, rotSpeed, Rotation2d.fromDegrees(-m_gyro.getYaw()));
+      setSpeeds(fwdSpeed, strSpeed, rotSpeed);
+    }));
+  }
+
+  private void setSpeeds(double fwdSpeed, double strSpeed, double rotSpeed) {
+    ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+        fwdSpeed, strSpeed, rotSpeed, m_gyro.getRotation2d().unaryMinus());
 
       SmartDashboard.putString("Speeds", speeds.toString());
 
@@ -180,66 +155,24 @@ public class DriveSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("Foward Speed", fwdSpeed);
       SmartDashboard.putNumber("Strafe Speed", strSpeed);
       SmartDashboard.putNumber("Rotation Speed", rotSpeed);
-    }));
   }
 
   public Command resetHeadingCommand() {
-    return run(() -> setSteerMotors(0, 0, 0, 0));
+    return runOnce(() -> m_gyro.zeroYaw());
   }
 
-  public Command autoCommand(Operation op, double amount) {
-    DoubleAdder m_amount = new DoubleAdder();
-    m_amount.add(amount);
+  public Command autoCommand(Pose2d goal) {
     return run(() -> {
-      // System.out.println(m_op == Operation.CMD_ANGLE);
-      if (op == Operation.CMD_ANGLE) { 
-        setSteerMotors(m_amount.sum(), m_amount.sum(), m_amount.sum(), m_amount.sum());
-      } else {
-        // turn on motors - set 20% power for now
-        double m_powerLevel = 0.2;
-        setDriveMotors(m_powerLevel, m_powerLevel, m_powerLevel, m_powerLevel);
-      }
-    }).beforeStarting(() -> {
-      if (op == Operation.CMD_DISTANCE) {
-        double currentPosition = (m_frontLeftSwerveModule.getDriveEncoder().getPosition());
-        SmartDashboard.putNumber("current position", currentPosition);
-        m_amount.add(currentPosition); 
-      } else {
-        SmartDashboard.putNumber("starting angle", m_frontLeftSwerveModule.getSteerAngle());
-      }
+      Transform2d direction = goal.minus(m_odometry.getPoseMeters());
+      double fwdSpeed = Math.max(Math.min(direction.getX(), 1), -1);
+      double strSpeed = Math.max(Math.min(direction.getY(), 1), -1);
+      double rotSpeed = Math.max(Math.min(direction.getRotation().getDegrees(), 1), -1);
+      setSpeeds(fwdSpeed, strSpeed, rotSpeed);
     }).until(() -> {
-      switch(op){
-        case CMD_ANGLE:
-          double encAng = m_frontLeftSwerveModule.getSteerAngle();
-          double ang1 = encAng - 360;
-          //The error between the actual angle and the target angle
-          double diff1 = Math.abs(encAng - m_amount.sum());
-          double diff2 = Math.abs(ang1 - m_amount.sum());
-          boolean isDone = (Math.min(diff1, diff2) < 2); // 2 degree tolerance
-          SmartDashboard.putNumber("fl_angle", m_frontLeftSwerveModule.getSteerAngle());
-          SmartDashboard.putNumber("bl_angle", m_backLeftSwerveModule.getSteerAngle());
-          SmartDashboard.putNumber("fr_angle", m_frontRightSwerveModule.getSteerAngle());
-          SmartDashboard.putNumber("br_angle", m_backLeftSwerveModule.getSteerAngle());
-
-          return isDone;
-        case CMD_DISTANCE:
-            //Determine whether the target distance has been reached
-            double currentPosition = (m_frontLeftSwerveModule.getDriveEncoder().getPosition());
-            SmartDashboard.putNumber("currentPostion", currentPosition);
-            SmartDashboard.putNumber("m_amount", m_amount.sum());
-            return (m_frontLeftSwerveModule.getDriveEncoder().getPosition() >= m_amount.sum());
-      }
-            
-      return false;
+      Transform2d direction = goal.minus(m_odometry.getPoseMeters());
+      return Math.abs(direction.getRotation().getDegrees()) < 2 && direction.getTranslation().getNorm() < 0.1;
     }).finallyDo(() -> {
-      switch(op){
-        case CMD_ANGLE:
-          SmartDashboard.putNumber("CAC end", m_amount.sum());
-          break;
-        case CMD_DISTANCE:
-          //Determine whether the target distance has been reached
-          setDriveMotors(0,0,0,0);
-      }
+      setSwerveStates(m_kinematics.toSwerveModuleStates(new ChassisSpeeds()));
     });
   }
 }
